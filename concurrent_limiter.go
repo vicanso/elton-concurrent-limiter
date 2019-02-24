@@ -63,8 +63,8 @@ type (
 	}
 )
 
-// NewConcurrentLimiter create a concurrent limiter middleware
-func NewConcurrentLimiter(config Config) cod.Handler {
+// New create a concurrent limiter middleware
+func New(config Config) cod.Handler {
 	if config.Lock == nil {
 		panic("require lock function")
 	}

@@ -12,7 +12,7 @@ import (
 
 func TestConcurrentLimiter(t *testing.T) {
 	m := new(sync.Map)
-	fn := NewConcurrentLimiter(Config{
+	fn := New(Config{
 		Keys: []string{
 			":ip",
 			"h:X-Token",
