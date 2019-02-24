@@ -52,8 +52,8 @@ type (
 		Lock    Lock
 		Skipper cod.Skipper
 	}
-	// ConcurrentKeyInfo the concurrent key's info
-	ConcurrentKeyInfo struct {
+	// KeyInfo the concurrent key's info
+	KeyInfo struct {
 		Name   string
 		Params bool
 		Query  bool
@@ -68,37 +68,37 @@ func New(config Config) cod.Handler {
 	if config.Lock == nil {
 		panic("require lock function")
 	}
-	keys := make([]*ConcurrentKeyInfo, 0)
+	keys := make([]*KeyInfo, 0)
 	// 根据配置生成key的处理
 	for _, key := range config.Keys {
 		if key == ipKey {
-			keys = append(keys, &ConcurrentKeyInfo{
+			keys = append(keys, &KeyInfo{
 				IP: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, headerKey) {
-			keys = append(keys, &ConcurrentKeyInfo{
+			keys = append(keys, &KeyInfo{
 				Name:   key[2:],
 				Header: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, queryKey) {
-			keys = append(keys, &ConcurrentKeyInfo{
+			keys = append(keys, &KeyInfo{
 				Name:  key[2:],
 				Query: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, paramKey) {
-			keys = append(keys, &ConcurrentKeyInfo{
+			keys = append(keys, &KeyInfo{
 				Name:   key[2:],
 				Params: true,
 			})
 			continue
 		}
-		keys = append(keys, &ConcurrentKeyInfo{
+		keys = append(keys, &KeyInfo{
 			Name: key,
 			Body: true,
 		})
