@@ -28,7 +28,7 @@ var (
 	errSubmitTooFrequently = &hes.Error{
 		StatusCode: http.StatusBadRequest,
 		Message:    "submit too frequently",
-		Category:   ErrCategoryConcurrentLimiter,
+		Category:   ErrCategory,
 	}
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
@@ -38,8 +38,8 @@ const (
 	headerKey = "h:"
 	queryKey  = "q:"
 	paramKey  = "p:"
-	// ErrCategoryConcurrentLimiter concurrent limiter error category
-	ErrCategoryConcurrentLimiter = "cod-concurrent-limiter"
+	// ErrCategory concurrent limiter error category
+	ErrCategory = "cod-concurrent-limiter"
 )
 
 type (
@@ -47,13 +47,14 @@ type (
 	Lock func(string, *cod.Context) (bool, func(), error)
 	// Config concurrent limiter config
 	Config struct {
-		// 生成limit key的相关参数
-		Keys    []string
+		// Keys keys for generate lock id
+		Keys []string
+		// Lock lock function
 		Lock    Lock
 		Skipper cod.Skipper
 	}
-	// KeyInfo the concurrent key's info
-	KeyInfo struct {
+	// keyInfo the concurrent key's info
+	keyInfo struct {
 		Name   string
 		Params bool
 		Query  bool
@@ -68,37 +69,37 @@ func New(config Config) cod.Handler {
 	if config.Lock == nil {
 		panic("require lock function")
 	}
-	keys := make([]*KeyInfo, 0)
+	keys := make([]*keyInfo, 0)
 	// 根据配置生成key的处理
 	for _, key := range config.Keys {
 		if key == ipKey {
-			keys = append(keys, &KeyInfo{
+			keys = append(keys, &keyInfo{
 				IP: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, headerKey) {
-			keys = append(keys, &KeyInfo{
+			keys = append(keys, &keyInfo{
 				Name:   key[2:],
 				Header: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, queryKey) {
-			keys = append(keys, &KeyInfo{
+			keys = append(keys, &keyInfo{
 				Name:  key[2:],
 				Query: true,
 			})
 			continue
 		}
 		if strings.HasPrefix(key, paramKey) {
-			keys = append(keys, &KeyInfo{
+			keys = append(keys, &keyInfo{
 				Name:   key[2:],
 				Params: true,
 			})
 			continue
 		}
-		keys = append(keys, &KeyInfo{
+		keys = append(keys, &keyInfo{
 			Name: key,
 			Body: true,
 		})
