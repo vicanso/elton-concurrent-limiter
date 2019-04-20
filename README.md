@@ -31,7 +31,7 @@ func main() {
 		"cuttlefish",
 	}
 	m := new(sync.Map)
-	d.Use(concurrentLimiter.New(concurrentLimiter.Config{
+	limit := concurrentLimiter.New(concurrentLimiter.Config{
 		Keys: []string{
 			":ip",
 			"h:X-Token",
@@ -50,9 +50,9 @@ func main() {
 			}
 			return
 		},
-	}))
+	})
 
-	d.GET("/", func(c *cod.Context) (err error) {
+	d.POST("/login", limit, func(c *cod.Context) (err error) {
 		time.Sleep(3 * time.Second)
 		c.BodyBuffer = bytes.NewBufferString("hello world")
 		return
