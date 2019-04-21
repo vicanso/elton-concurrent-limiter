@@ -136,6 +136,7 @@ func New(config Config) cod.Handler {
 
 		success, unlock, err := config.Lock(lockKey, c)
 		if err != nil {
+			err = hes.Wrap(err)
 			return
 		}
 		if !success {

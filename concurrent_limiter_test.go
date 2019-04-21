@@ -87,7 +87,7 @@ func TestConcurrentLimiter(t *testing.T) {
 	t.Run("lock function return error", func(t *testing.T) {
 		c.Params = map[string]string{}
 		err := fn(c)
-		if err.Error() != "key is invalid" {
+		if err.Error() != "message=key is invalid" {
 			t.Fatalf("lock function should return error")
 		}
 	})
