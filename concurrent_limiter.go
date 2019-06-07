@@ -15,6 +15,7 @@
 package concurrentlimiter
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -30,7 +31,8 @@ var (
 		Message:    "submit too frequently",
 		Category:   ErrCategory,
 	}
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
+	errRequireLockFunction = errors.New("require lock function")
+	json                   = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 const (
@@ -67,7 +69,7 @@ type (
 // New create a concurrent limiter middleware
 func New(config Config) cod.Handler {
 	if config.Lock == nil {
-		panic("require lock function")
+		panic(errRequireLockFunction)
 	}
 	keys := make([]*keyInfo, 0)
 	// 根据配置生成key的处理
