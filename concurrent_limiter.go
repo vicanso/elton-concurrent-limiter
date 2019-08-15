@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 	"github.com/vicanso/hes"
 )
 
@@ -41,19 +41,19 @@ const (
 	queryKey  = "q:"
 	paramKey  = "p:"
 	// ErrCategory concurrent limiter error category
-	ErrCategory = "cod-concurrent-limiter"
+	ErrCategory = "elton-concurrent-limiter"
 )
 
 type (
 	// Lock lock the key
-	Lock func(string, *cod.Context) (bool, func(), error)
+	Lock func(string, *elton.Context) (bool, func(), error)
 	// Config concurrent limiter config
 	Config struct {
 		// Keys keys for generate lock id
 		Keys []string
 		// Lock lock function
 		Lock    Lock
-		Skipper cod.Skipper
+		Skipper elton.Skipper
 	}
 	// keyInfo the concurrent key's info
 	keyInfo struct {
@@ -67,7 +67,7 @@ type (
 )
 
 // New create a concurrent limiter middleware
-func New(config Config) cod.Handler {
+func New(config Config) elton.Handler {
 	if config.Lock == nil {
 		panic(errRequireLockFunction)
 	}
@@ -108,9 +108,9 @@ func New(config Config) cod.Handler {
 	}
 	skipper := config.Skipper
 	if skipper == nil {
-		skipper = cod.DefaultSkipper
+		skipper = elton.DefaultSkipper
 	}
-	return func(c *cod.Context) (err error) {
+	return func(c *elton.Context) (err error) {
 		if skipper(c) {
 			return c.Next()
 		}

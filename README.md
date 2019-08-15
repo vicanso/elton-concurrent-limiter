@@ -1,9 +1,9 @@
-# cod-concurrent-limiter
+# elton-concurrent-limiter
 
-[![Build Status](https://img.shields.io/travis/vicanso/cod-concurrent-limiter.svg?label=linux+build)](https://travis-ci.org/vicanso/cod-concurrent-limiter)
+[![Build Status](https://img.shields.io/travis/vicanso/elton-concurrent-limiter.svg?label=linux+build)](https://travis-ci.org/vicanso/elton-concurrent-limiter)
 
 
-Concurrent limiter for cod. It support to get lock value from five way. `Client IP`, `QueryString`, `Request Header`, `Route Params` and `Post Body`.
+Concurrent limiter for elton. It support to get lock value from five way. `Client IP`, `QueryString`, `Request Header`, `Route Params` and `Post Body`.
 
 - `IP` The key's name is `:ip`
 - `QueryString` The key's name has prefix `q:`
@@ -19,14 +19,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 
-	concurrentLimiter "github.com/vicanso/cod-concurrent-limiter"
+	concurrentLimiter "github.com/vicanso/elton-concurrent-limiter"
 )
 
 func main() {
 
-	d := cod.New()
+	d := elton.New()
 	d.Keys = []string{
 		"cuttlefish",
 	}
@@ -39,7 +39,7 @@ func main() {
 			"p:id",
 			"account",
 		},
-		Lock: func(key string, c *cod.Context) (success bool, unlock func(), err error) {
+		Lock: func(key string, c *elton.Context) (success bool, unlock func(), err error) {
 			_, loaded := m.LoadOrStore(key, true)
 			// the key not exists
 			if !loaded {
@@ -52,7 +52,7 @@ func main() {
 		},
 	})
 
-	d.POST("/login", limit, func(c *cod.Context) (err error) {
+	d.POST("/login", limit, func(c *elton.Context) (err error) {
 		time.Sleep(3 * time.Second)
 		c.BodyBuffer = bytes.NewBufferString("hello world")
 		return

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 )
 
 func TestNoLockFunction(t *testing.T) {
@@ -33,7 +33,7 @@ func TestConcurrentLimiter(t *testing.T) {
 			"p:id",
 			"account",
 		},
-		Lock: func(key string, c *cod.Context) (success bool, unlock func(), err error) {
+		Lock: func(key string, c *elton.Context) (success bool, unlock func(), err error) {
 			if key != "192.0.2.1,xyz,1,123,tree.xie" {
 				err = errors.New("key is invalid")
 				return
@@ -54,7 +54,7 @@ func TestConcurrentLimiter(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/users/login?type=1", nil)
 	resp := httptest.NewRecorder()
-	c := cod.NewContext(resp, req)
+	c := elton.NewContext(resp, req)
 	req.Header.Set("X-Token", "xyz")
 	c.RequestBody = []byte(`{
 		"account": "tree.xie"
@@ -86,7 +86,7 @@ func TestConcurrentLimiter(t *testing.T) {
 		go func() {
 			time.Sleep(10 * time.Millisecond)
 			e := fn(c)
-			assert.Equal(e.Error(), "category=cod-concurrent-limiter, message=submit too frequently")
+			assert.Equal(e.Error(), "category=elton-concurrent-limiter, message=submit too frequently")
 		}()
 		err := fn(c)
 		// 登录限制,192.0.2.1,xyz,1,123,tree.xie
