@@ -27,9 +27,6 @@ import (
 func main() {
 
 	d := elton.New()
-	d.Keys = []string{
-		"cuttlefish",
-	}
 	m := new(sync.Map)
 	limit := concurrentLimiter.New(concurrentLimiter.Config{
 		Keys: []string{
@@ -60,4 +57,8 @@ func main() {
 
 	d.ListenAndServe(":7001")
 }
+```
+
+```bash
+curl -XPOST 'http://127.0.0.1:7001/login'
 ```
