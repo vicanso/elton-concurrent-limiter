@@ -110,11 +110,12 @@ func New(config Config) elton.Handler {
 	if skipper == nil {
 		skipper = elton.DefaultSkipper
 	}
+	keyLength := len(keys)
 	return func(c *elton.Context) (err error) {
 		if skipper(c) {
 			return c.Next()
 		}
-		values := make([]string, len(keys))
+		sb := new(strings.Builder)
 		// 获取 lock 的key
 		for i, key := range keys {
 			v := ""
@@ -132,9 +133,12 @@ func New(config Config) elton.Handler {
 				body := c.RequestBody
 				v = json.Get(body, name).ToString()
 			}
-			values[i] = v
+			sb.WriteString(v)
+			if i < keyLength-1 {
+				sb.WriteRune(',')
+			}
 		}
-		lockKey := strings.Join(values, ",")
+		lockKey := sb.String()
 
 		success, unlock, err := config.Lock(lockKey, c)
 		if err != nil {

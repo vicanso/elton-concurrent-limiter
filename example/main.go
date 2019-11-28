@@ -1,17 +1,3 @@
-# elton-concurrent-limiter
-
-[![Build Status](https://img.shields.io/travis/vicanso/elton-concurrent-limiter.svg?label=linux+build)](https://travis-ci.org/vicanso/elton-concurrent-limiter)
-
-
-Concurrent limiter for elton. It support to get lock value from five ways. `Client IP`, `QueryString`, `Request Header`, `Route Params` and `Post Body`.
-
-- `IP` The key's name is `:ip`
-- `QueryString` The key's name has prefix `q:`
-- `Request Header` The key's name has prefix `h:`
-- `Route Params` The key's name has prefix `p:`
-- `Post Body` The other's key
-
-```go
 package main
 
 import (
@@ -57,8 +43,3 @@ func main() {
 
 	d.ListenAndServe(":7001")
 }
-```
-
-```bash
-curl -XPOST 'http://127.0.0.1:7001/login'
-```
