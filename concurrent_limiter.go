@@ -116,6 +116,8 @@ func New(config Config) elton.Handler {
 			return c.Next()
 		}
 		sb := new(strings.Builder)
+		// 先申请假定每个value的长度
+		sb.Grow(8 * keyLength)
 		// 获取 lock 的key
 		for i, key := range keys {
 			v := ""
