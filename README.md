@@ -26,7 +26,7 @@ import (
 
 func main() {
 
-	d := elton.New()
+	e := elton.New()
 	m := new(sync.Map)
 	limit := concurrentLimiter.New(concurrentLimiter.Config{
 		Keys: []string{
@@ -49,13 +49,16 @@ func main() {
 		},
 	})
 
-	d.POST("/login", limit, func(c *elton.Context) (err error) {
+	e.POST("/login", limit, func(c *elton.Context) (err error) {
 		time.Sleep(3 * time.Second)
 		c.BodyBuffer = bytes.NewBufferString("hello world")
 		return
 	})
 
-	d.ListenAndServe(":3000")
+	err := e.ListenAndServe(":3000")
+	if err != nil {
+		panic(err)
+	})
 }
 ```
 
